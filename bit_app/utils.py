@@ -73,7 +73,9 @@ def validate_meeting(start_date, end_date, start_time, end_time, recurrence, use
 
         for i in metting_list:
             for j in date_list:
-                if (i['start_date'] < j['end_date'] and i['end_date'] > j['start_date']):
+                if (i['start_date'] >= j['start_date'] and i['start_date'] < j['end_date']) \
+                or (i['end_date'] > j['start_date'] and i['end_date'] <= j['end_date']) \
+                or (i['start_date'] < j['end_date'] and i['end_date'] > j['start_date']):
                     return True, j["start_date"], j["end_date"]
     
     return False, None, None
