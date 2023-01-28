@@ -52,7 +52,14 @@ class CalendarSerializer(serializers.ModelSerializer):
 class CalendarResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Calendar
-        fields = ('user', 'title', 'start_time','end_time','recurrence')
+        fields = ('user', 'title', 'start_time','end_time', 'meeting_ends_on', 'recurrence')
+
+
+class UserCalendarSerializer(serializers.ModelSerializer):
+    user_id = serializers.UUIDField(source='user.id')
+    class Meta:
+        model = Calendar
+        fields = ('id', 'user_id', 'title', 'start_time', 'end_time', 'meeting_ends_on', 'recurrence')
 
 
 class UpdateMeetingSerializer(serializers.Serializer):

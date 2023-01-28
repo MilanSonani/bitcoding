@@ -1,11 +1,10 @@
-from .serializers import UserRegisterSerializer, CalendarSerializer, CalendarResponseSerializer, UpdateMeetingSerializer
+from .serializers import UserRegisterSerializer, CalendarSerializer, CalendarResponseSerializer, UpdateMeetingSerializer, UserCalendarSerializer
 from .models import CustomUser, Calendar
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, status
+from rest_framework import generics, viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
-# from rest_framework.permissions import AllowAny
 from .utils import get_location_by_ip
 
 class UserRegistrationView(APIView):
@@ -54,6 +53,15 @@ class CalendarDetailView(generics.RetrieveAPIView):
 
     queryset = Calendar.objects.all()
     serializer_class = CalendarResponseSerializer
+
+
+class UserCalendarDetailView(viewsets.ModelViewSet):
+    queryset = Calendar.objects.all()
+    serializer_class = UserCalendarSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Calendar.objects.filter(user__id=user_id)
 
 
 class DeleteMeetingView(APIView):
