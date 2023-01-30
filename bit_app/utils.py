@@ -1,4 +1,5 @@
 import pytz
+import uuid
 from datetime import datetime 
 import pycountry
 from geopy.geocoders import Nominatim
@@ -79,3 +80,11 @@ def validate_meeting(start_date, end_date, start_time, end_time, recurrence, use
                     return True, j["start_date"], j["end_date"]
     
     return False, None, None
+
+
+def validate_uuid(input_uuid):
+    try:
+        uuid.UUID(input_uuid)
+        return True
+    except ValueError:
+        raise Exception("Invalid UUID")
