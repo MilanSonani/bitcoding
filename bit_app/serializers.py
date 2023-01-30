@@ -31,11 +31,14 @@ class CalendarSerializer(serializers.ModelSerializer):
         if value not in ['daily', 'weekly', 'monthly', 'yearly']:
             raise serializers.ValidationError("Invalid recurrence value. Accepted values are 'daily', 'weekly', 'monthly', 'yearly'")
         return value
-    
+
     def validate(self, data):
         date_time_obj = datetime.strptime(str(data['start_time'].replace(tzinfo=None)), '%Y-%m-%d %H:%M:%S')
         end_time = datetime.strptime(str(data['end_time'].replace(tzinfo=None)), '%Y-%m-%d %H:%M:%S').time()
         end_date_time_obj = datetime.strptime(str(data['meeting_ends_on']), '%Y-%m-%d')
+
+        if date_time_obj > datetime.strptime(str(data['end_time'].replace(tzinfo=None)), '%Y-%m-%d %H:%M:%S'):
+            raise serializers.ValidationError(f"Meetnig end time must be greter than start time")
         
         availability, start_time_x, end_time_x = validate_meeting(date_time_obj.date(),
             end_date_time_obj.date(),
