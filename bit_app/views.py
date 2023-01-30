@@ -1,11 +1,12 @@
 from .serializers import UserRegisterSerializer, CalendarSerializer, CalendarResponseSerializer, UpdateMeetingSerializer, UserCalendarSerializer
 from .models import CustomUser, Calendar
 from django.shortcuts import get_object_or_404
-from rest_framework import generics, viewsets, status
+from rest_framework import generics, viewsets, status, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser
-from .utils import get_location_by_ip
+from .utils import get_location_by_ip, validate_uuid
+
 
 class UserRegistrationView(APIView):
     parser_classes = [MultiPartParser]
@@ -60,8 +61,14 @@ class UserCalendarDetailView(viewsets.ModelViewSet):
     serializer_class = UserCalendarSerializer
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return Calendar.objects.filter(user__id=user_id)
+        try:
+            if not validate_uuid(self.kwargs['user_id']):
+                raise Exception("Invalid UUID")
+            else:
+                user_id = self.kwargs['user_id']
+                return Calendar.objects.filter(user__id=user_id)
+        except Exception as e:
+            raise serializers.ValidationError({"error": f"User not found with id {self.kwargs['user_id']}"})
 
 
 class DeleteMeetingView(APIView):

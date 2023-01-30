@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import CustomUser, Calendar
 from .utils import validate_meeting
 
+
 class UserRegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=50)
     password = serializers.CharField(max_length=16)
@@ -95,5 +96,5 @@ class UpdateMeetingSerializer(serializers.Serializer):
             data['user_id']
         )
         if availability:
-            raise serializers.ValidationError(f"User is not available between {start_time_x} to {end_time_x} ")
+            raise serializers.ValidationError(f"User is not available between {start_time_x} to {end_time_x}")
         return data
